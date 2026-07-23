@@ -21,24 +21,27 @@ class Player(pygame.sprite.Sprite):
         self.direction = self.direction.normalize() if self.direction else self.direction
 
     def move(self, delta_time):
-        self.rect.x += self.direction.x * self.speed * delta_time
+        self.hitbox_rect.x += self.direction.x * self.speed * delta_time
         self.collision('horizontal')
-        self.rect.y += self.direction.y * self.speed * delta_time
+        self.hitbox_rect.y += self.direction.y * self.speed * delta_time
         self.collision('vertical')
+        self.rect.center = self.hitbox_rect.center
 
     def collision(self, direction):
         for sprite in self.collision_sprites:
-            if sprite.rect.colliderect(self.rect):
+            if sprite.rect.colliderect(self.hitbox_rect):
                 if direction == 'horizontal':
                     if self.direction.x > 0:
-                        self.rect.right = sprite.rect.left
+                        self.hitbox_rect.right = sprite.rect.left
                     elif self.direction.x < 0:
-                        self.rect.left = sprite.rect.right
+                        self.hitbox_rect.left = sprite.rect.right
                 if direction == 'vertical':
                     if self.direction.y > 0:
-                        self.rect.bottom = sprite.rect.top
+                        self.hitbox_rect.bottom = sprite.rect.top
+                        self.rect.center = self.hitbox_rect.center
                     elif self.direction.y < 0:
-                        self.rect.top = sprite.rect.bottom
+                        self.hitbox_rect.top = sprite.rect.bottom
+                        self.rect.center = self.hitbox_rect.center
 
     def update(self, delta_time):
         self.input()
